@@ -41,8 +41,16 @@ function Hubdb(options) {
         });
     }
 
+    function update(id, data, callback) {
+        repo.write(options.branch, id, JSON.stringify(data), '+',
+            function(err, res) {
+                callback(err, res);
+        });
+    }
+
     return {
         list: list,
+        update: update,
         add: add
     };
 }
