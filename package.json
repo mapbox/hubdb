@@ -1,0 +1,22 @@
+{
+  "name": "hubdb",
+  "version": "1.0.0",
+  "description": "a github-powered database",
+  "main": "index.js",
+  "scripts": {
+    "test": "tape test.js"
+  },
+  "keywords": [
+    "github",
+    "db",
+    "database",
+    "nosql"
+  ],
+  "author": "Tom MacWright",
+  "license": "ISC",
+  "dependencies": {
+    "browserify": "^8.1.3",
+    "github-api": "^0.10.3",
+    "hat": "0.0.3"
+  }
+}
