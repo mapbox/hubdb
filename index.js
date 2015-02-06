@@ -4,6 +4,17 @@ var Github = require('github-api'),
 
 module.exports = Hubdb;
 
+/**
+ * Create a new Hubdb instance. This is a database-like wrapper for a
+ * branch of a GitHub repository that treats JSON objects in that branch
+ * as documents.
+ * @param {Object} options
+ * @param {string} options.username the user's name of the repository.
+ * this is not necessary the user that's logged in.
+ * @param {string} options.repo the repository name
+ * @param {string} options.token a GitHub token. You'll need to get this
+ * by OAuth'ing into GitHub or use an applicaton token.
+ */
 function Hubdb(options) {
 
     var github = new Github({
@@ -11,8 +22,14 @@ function Hubdb(options) {
       auth: "oauth"
     });
 
-    var repo = github.getRepo('mapbox', 'hubdb');
+    var repo = github.getRepo(options.username, options.repo);
 
+    /**
+     * List documents within this database. If successful, the given
+     * callback is called with an array of documents as
+     * `{ path: string, data: object }` objects.
+     * @param {Function} callback
+     */
     function list(callback) {
         repo.getTree(options.branch, function(err, tree) {
             var q = queue(1);
@@ -20,7 +37,7 @@ function Hubdb(options) {
                 return item.path.match(/json$/);
             }).forEach(function(item) {
                 q.defer(function(cb) {
-                    repo.read(options.branch, item.path + '?ref=db', function(err, res) {
+                    repo.read(options.branch, item.path + '?ref=' + options.branch, function(err, res) {
                         if (err) return cb(err);
                         return cb(null, { path: item.path, data: JSON.parse(res) });
                     });
@@ -33,6 +50,14 @@ function Hubdb(options) {
         });
     }
 
+    /**
+     * Add a new object to the database. If successful, the callback is called
+     * with (err, res) in which `res` reveals the id internally chosen
+     * for this new item.
+     *
+     * @param {Object} data
+     * @param {Function} callback
+     */
     function add(data, callback) {
         var id = hat() + '.json';
         repo.write(options.branch, id, JSON.stringify(data), '+',
@@ -41,6 +66,21 @@ function Hubdb(options) {
         });
     }
 
+    function remove(id, callback) {
+        repo.remove(options.branch, id + '?ref=' + options.branch,
+            function(err, res) {
+                callback(err, res);
+        });
+    }
+
+
+    /**
+     * Update an object in the database, given its id, new data, and a callback.
+     *
+     * @param {String} id
+     * @param {Object} data
+     * @param {Function} callback
+     */
     function update(id, data, callback) {
         repo.write(options.branch, id, JSON.stringify(data), '+',
             function(err, res) {
@@ -51,6 +91,7 @@ function Hubdb(options) {
     return {
         list: list,
         update: update,
+        // remove: remove,
         add: add
     };
 }

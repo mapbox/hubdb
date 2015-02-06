@@ -4,7 +4,8 @@
   "description": "a github-powered database",
   "main": "index.js",
   "scripts": {
-    "test": "tape test.js"
+    "test": "tape test.js",
+    "doc": "dox -r < index.js | doxme --readme > README.md"
   },
   "keywords": [
     "github",
@@ -19,5 +20,9 @@
     "github-api": "^0.10.3",
     "hat": "0.0.3",
     "queue-async": "^1.0.7"
+  },
+  "devDependencies": {
+    "dox": "^0.6.1",
+    "doxme": "^1.4.3"
   }
 }
