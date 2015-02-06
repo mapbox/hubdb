@@ -12,8 +12,25 @@ module.exports = Hubdb;
  * @param {string} options.username the user's name of the repository.
  * this is not necessary the user that's logged in.
  * @param {string} options.repo the repository name
+ * @param {string} options.branch the branch of the repository to use as a
+ * database.
  * @param {string} options.token a GitHub token. You'll need to get this
  * by OAuth'ing into GitHub or use an applicaton token.
+ * @example
+ * var db = Hubdb({
+ *  token: 'MY_TOKEN',
+ *  user: 'mapbox',
+ *  repo: 'hubdb',
+ *  branch: 'db'
+ * });
+ * db.add({ grass: 'green', function() {
+ *   db.list(function(err, res) {
+ *     // [{
+ *     //   path: '2e959f35c6022428943b9c96d974498d.json'
+ *     //   data: { grass: 'green' }
+ *     // }]
+ *   });
+ * });
  */
 function Hubdb(options) {
 

@@ -3,7 +3,7 @@
 a github-powered database
 
 
-### `Hubdb(options, options.username, options.repo, options.token)`
+### `Hubdb(options, options.username, options.repo, options.branch, options.token)`
 
 Create a new Hubdb instance. This is a database-like wrapper for a
 branch of a GitHub repository that treats JSON objects in that branch
@@ -16,8 +16,28 @@ as documents.
 | `options`          | Object |                                                                                              |
 | `options.username` | string | the user's name of the repository. this is not necessary the user that's logged in.          |
 | `options.repo`     | string | the repository name                                                                          |
+| `options.branch`   | string | the branch of the repository to use as a database.                                           |
 | `options.token`    | string | a GitHub token. You'll need to get this by OAuth'ing into GitHub or use an applicaton token. |
 
+
+### Example
+
+```js
+var db = Hubdb({
+ token: 'MY_TOKEN',
+ user: 'mapbox',
+ repo: 'hubdb',
+ branch: 'db'
+});
+db.add({ grass: 'green', function() {
+  db.list(function(err, res) {
+    // [{
+    //   path: '2e959f35c6022428943b9c96d974498d.json'
+    //   data: { grass: 'green' }
+    // }]
+  });
+});
+```
 
 
 ### `list(callback)`
