@@ -19,11 +19,11 @@ module.exports = Hubdb;
  * @example
  * var db = Hubdb({
  *  token: 'MY_TOKEN',
- *  user: 'mapbox',
+ *  username: 'mapbox',
  *  repo: 'hubdb',
  *  branch: 'db'
  * });
- * db.add({ grass: 'green', function() {
+ * db.add({ grass: 'green' }, function() {
  *   db.list(function(err, res) {
  *     // [{
  *     //   path: '2e959f35c6022428943b9c96d974498d.json'
