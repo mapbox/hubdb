@@ -14,14 +14,17 @@ module.exports = Hubdb;
  * good example of hubdb in practice is in [stickshift](https://github.com/mapbox/stickshift),
  * where it powers a lightweight query storage for an analytics app.
  *
+ * Takes a configuration object with options:
+ *
+ * * `username` the user's name of the repository.
+ *   this is not necessary the user that's logged in.
+ * * `repo` the repository name
+ * * `branch` the branch of the repository to use as a
+ *   database.
+ * * `token` a GitHub token. You'll need to get this
+ *   by OAuth'ing into GitHub or use an applicaton token.
+ *
  * @param {Object} options
- * @param {string} options.username the user's name of the repository.
- * this is not necessary the user that's logged in.
- * @param {string} options.repo the repository name
- * @param {string} options.branch the branch of the repository to use as a
- * database.
- * @param {string} options.token a GitHub token. You'll need to get this
- * by OAuth'ing into GitHub or use an applicaton token.
  * @example
  * var db = Hubdb({
  *  token: 'MY_TOKEN',
@@ -51,7 +54,8 @@ function Hubdb(options) {
      * List documents within this database. If successful, the given
      * callback is called with an array of documents as
      * `{ path: string, data: object }` objects.
-     * @param {Function} callback
+     * @param {Function} callback called with (err, contents): contents
+     * is an array of `{ path: string, data: object }`
      */
     function list(callback) {
         repo.git.trees(options.branch).fetch(function(err, res) {
@@ -82,7 +86,7 @@ function Hubdb(options) {
      * for this new item.
      *
      * @param {Object} data
-     * @param {Function} callback
+     * @param {Function} callback called with (err, result, id)
      */
     function add(data, callback) {
         var id = hat() + '.json';
@@ -99,7 +103,7 @@ function Hubdb(options) {
      * Remove an item from the database given its id  and a callback.
      *
      * @param {String} id
-     * @param {Function} callback
+     * @param {Function} callback called with (err, result, id)
      */
     function remove(id, callback) {
         repo.contents(id).fetch({
@@ -120,7 +124,8 @@ function Hubdb(options) {
      * Get an item from the database given its id  and a callback.
      *
      * @param {String} id
-     * @param {Function} callback
+     * @param {Function} callback called with (err, contents): contents
+     * are given as parsed JSON
      */
     function get(id, callback) {
         repo.contents(id).fetch({
@@ -138,8 +143,8 @@ function Hubdb(options) {
      * Update an object in the database, given its id, new data, and a callback.
      *
      * @param {String} id
-     * @param {Object} data
-     * @param {Function} callback
+     * @param {Object} data as any JSON-serializable object
+     * @param {Function} callback called with (err, result, id)
      */
     function update(id, data, callback) {
         repo.contents(id).fetch({
