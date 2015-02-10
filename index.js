@@ -1,4 +1,4 @@
-var Github = require('github-api'),
+var Octokat = require('octokat'),
     hat = require('hat'),
     queue = require('queue-async');
 
@@ -34,12 +34,12 @@ module.exports = Hubdb;
  */
 function Hubdb(options) {
 
-    var github = new Github({
+    var github = new Octokat({
       token: options.token,
       auth: "oauth"
     });
 
-    var repo = github.getRepo(options.username, options.repo);
+    var repo = github.repos(options.username, options.repo);
 
     /**
      * List documents within this database. If successful, the given
@@ -77,16 +77,27 @@ function Hubdb(options) {
      */
     function add(data, callback) {
         var id = hat() + '.json';
-        repo.write(options.branch, id, JSON.stringify(data), '+',
-            function(err, res) {
-                callback(err, res);
+        repo.contents(id).add({
+            content: btoa(JSON.stringify(data)),
+            branch: options.branch,
+            message: '+'
+        }, function(err, res) {
+           callback(err, res, id);
         });
     }
 
     function remove(id, callback) {
-        repo.remove(options.branch, id + '?ref=' + options.branch,
-            function(err, res) {
-                callback(err, res);
+        repo.contents(id).fetch({
+            ref: options.branch
+        }, function(err, info) {
+            if (err) return callback(err);
+            repo.contents(id).remove({
+                branch: options.branch,
+                sha: info.sha,
+                message: '-'
+            }, function(err, res) {
+               callback(err, res, id);
+            });
         });
     }
 
@@ -99,16 +110,25 @@ function Hubdb(options) {
      * @param {Function} callback
      */
     function update(id, data, callback) {
-        repo.write(options.branch, id, JSON.stringify(data), '+',
-            function(err, res) {
-                callback(err, res);
+        repo.contents(id).fetch({
+            ref: options.branch
+        }, function(err, info) {
+            if (err) return callback(err);
+            repo.contents(id).add({
+                branch: options.branch,
+                sha: info.sha,
+                content: btoa(JSON.stringify(data)),
+                message: 'updated'
+            }, function(err, res) {
+               callback(err, res, id);
+            });
         });
     }
 
     return {
         list: list,
         update: update,
-        // remove: remove,
+        remove: remove,
         add: add
     };
 }
