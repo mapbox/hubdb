@@ -48,15 +48,18 @@ function Hubdb(options) {
      * @param {Function} callback
      */
     function list(callback) {
-        repo.getTree(options.branch, function(err, tree) {
+        repo.git.trees(options.branch).fetch(function(err, res) {
             var q = queue(1);
-            tree.filter(function(item) {
+            res.tree.filter(function(item) {
                 return item.path.match(/json$/);
             }).forEach(function(item) {
                 q.defer(function(cb) {
-                    repo.read(options.branch, item.path + '?ref=' + options.branch, function(err, res) {
+                    get(item.path, function(err, content) {
                         if (err) return cb(err);
-                        return cb(null, { path: item.path, data: JSON.parse(res) });
+                        return cb(null, {
+                            path: item.path,
+                            data: content
+                        });
                     });
                 });
             });
@@ -86,6 +89,12 @@ function Hubdb(options) {
         });
     }
 
+    /**
+     * Remove an item from the database given its id  and a callback.
+     *
+     * @param {String} id
+     * @param {Function} callback
+     */
     function remove(id, callback) {
         repo.contents(id).fetch({
             ref: options.branch
@@ -101,6 +110,23 @@ function Hubdb(options) {
         });
     }
 
+    /**
+     * Get an item from the database given its id  and a callback.
+     *
+     * @param {String} id
+     * @param {Function} callback
+     */
+    function get(id, callback) {
+        repo.contents(id).fetch({
+            ref: options.branch
+        }, function(err, res) {
+            if (err) return callback(err);
+            repo.git.blobs(res.sha).fetch(function(err, res) {
+                if (err) return callback(err);
+                callback(err, JSON.parse(atob(res.content)));
+            });
+        });
+    }
 
     /**
      * Update an object in the database, given its id, new data, and a callback.
@@ -129,6 +155,7 @@ function Hubdb(options) {
         list: list,
         update: update,
         remove: remove,
+        get: get,
         add: add
     };
 }
