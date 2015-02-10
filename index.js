@@ -8,6 +8,12 @@ module.exports = Hubdb;
  * Create a new Hubdb instance. This is a database-like wrapper for a
  * branch of a GitHub repository that treats JSON objects in that branch
  * as documents.
+ *
+ * Hubdb shines where GitHub itself makes sense: you can take
+ * advantage of GitHub's well-architected APIs and user permissions. A
+ * good example of hubdb in practice is in [stickshift](https://github.com/mapbox/stickshift),
+ * where it powers a lightweight query storage for an analytics app.
+ *
  * @param {Object} options
  * @param {string} options.username the user's name of the repository.
  * this is not necessary the user that's logged in.

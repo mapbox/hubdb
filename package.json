@@ -4,11 +4,13 @@
   "description": "a github-powered database",
   "main": "index.js",
   "scripts": {
-    "test": "tape test.js",
+    "test": "jshint index.js",
     "doc": "dox -r < index.js | doxme --readme > README.md"
   },
   "browserify": {
-    "transform": ["envify"]
+    "transform": [
+      "envify"
+    ]
   },
   "keywords": [
     "github",
@@ -27,6 +29,11 @@
   },
   "devDependencies": {
     "dox": "^0.6.1",
-    "doxme": "^1.4.3"
+    "doxme": "^1.4.3",
+    "jshint": "^2.6.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:mapbox/hubdb.git"
   }
 }

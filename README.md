@@ -1,5 +1,7 @@
 # hubdb
 
+[![build status](https://secure.travis-ci.org/mapbox/hubdb.png)](http://travis-ci.org/mapbox/hubdb)
+
 a github-powered database
 
 
@@ -8,6 +10,12 @@ a github-powered database
 Create a new Hubdb instance. This is a database-like wrapper for a
 branch of a GitHub repository that treats JSON objects in that branch
 as documents.
+
+Hubdb shines where GitHub itself makes sense: you can take
+advantage of GitHub's well-architected APIs and user permissions. A
+good example of hubdb in practice is in [stickshift](https://github.com/mapbox/stickshift),
+where it powers a lightweight query storage for an analytics app.
+
 
 ### Parameters
 
@@ -29,7 +37,7 @@ var db = Hubdb({
  repo: 'hubdb',
  branch: 'db'
 });
-db.add({ grass: 'green'}, function() {
+db.add({ grass: 'green' }, function() {
   db.list(function(err, res) {
     // [{
     //   path: '2e959f35c6022428943b9c96d974498d.json'
@@ -66,6 +74,34 @@ for this new item.
 | parameter  | type     | description |
 | ---------- | -------- | ----------- |
 | `data`     | Object   |             |
+| `callback` | Function |             |
+
+
+
+### `remove(id, callback)`
+
+Remove an item from the database given its id  and a callback.
+
+
+### Parameters
+
+| parameter  | type     | description |
+| ---------- | -------- | ----------- |
+| `id`       | String   |             |
+| `callback` | Function |             |
+
+
+
+### `get(id, callback)`
+
+Get an item from the database given its id  and a callback.
+
+
+### Parameters
+
+| parameter  | type     | description |
+| ---------- | -------- | ----------- |
+| `id`       | String   |             |
 | `callback` | Function |             |
 
 
