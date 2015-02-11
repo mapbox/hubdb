@@ -1,5 +1,7 @@
 var Octokat = require('octokat'),
     hat = require('hat'),
+    atob = require('atob'),
+    btoa = require('btoa'),
     queue = require('queue-async');
 
 module.exports = Hubdb;
