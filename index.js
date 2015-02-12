@@ -59,6 +59,7 @@ function Hubdb(options) {
      */
     function list(callback) {
         repo.git.trees(options.branch).fetch(function(err, res) {
+            if (err) return callback(err);
             var q = queue(1);
             res.tree.filter(function(item) {
                 return item.path.match(/json$/);
