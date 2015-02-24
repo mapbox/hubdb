@@ -166,6 +166,7 @@ function Hubdb(options) {
     /**
      * get the SHA corresponding to id at the HEAD of options.branch 
      *
+     * @access private
      * @param {String} id
      * @param {Function} callback called with (err, result)
      */
