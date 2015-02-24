@@ -175,7 +175,7 @@ function Hubdb(options) {
             ref: options.branch
         }, function(err, res) {
             if (err) return callback(err);
-            sha = res.reduce(function(previousValue, item) {
+            var sha = res.reduce(function(previousValue, item) {
                 return item.name === id ? item.sha : previousValue;
             }, "");
             callback(err, sha);
