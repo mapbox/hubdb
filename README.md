@@ -100,7 +100,7 @@ Remove an item from the database given its id  and a callback.
 
 ### `get(id, callback)`
 
-Get an item from the database given its id  and a callback.
+Get an item from the database given its id and a callback.
 
 
 ### Parameters
@@ -139,4 +139,5 @@ $ npm install hubdb
 ```sh
 $ npm test
 ```
+
 
