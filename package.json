@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "jshint index.js",
-    "doc": "dox -r < index.js | doxme --readme > README.md"
+    "doc": "dox -r < index.js | doxme --readme > README.md",
+    "prepublish": "browserify index.js -s Hubdb > hubdb.js"
   },
   "browserify": {
     "transform": [
