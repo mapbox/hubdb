@@ -131,11 +131,12 @@ function Hubdb(options) {
      * are given as parsed JSON
      */
     function get(id, callback) {
-        repo.contents(id).fetch({
-            ref: options.branch
-        }, function(err, res) {
+        repo.git.trees(options.branch).fetch(function(err, res) {
             if (err) return callback(err);
-            repo.git.blobs(res.sha).fetch(function(err, res) {
+            var sha = res.tree.reduce(function(previousValue, item) {
+                return item.path === id ? item.sha : previousValue;
+            }, "");
+            repo.git.blobs(sha).fetch(function(err, res) {
                 if (err) return callback(err);
                 callback(err, JSON.parse(atob(res.content)));
             });
