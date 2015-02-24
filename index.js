@@ -124,18 +124,16 @@ function Hubdb(options) {
     }
 
     /**
-     * Get an item from the database given its id  and a callback.
+     * Get an item from the database given its id and a callback.
      *
      * @param {String} id
      * @param {Function} callback called with (err, contents): contents
      * are given as parsed JSON
      */
     function get(id, callback) {
-        repo.contents(id).fetch({
-            ref: options.branch
-        }, function(err, res) {
+        _getSHA(id, function(err, sha) {
             if (err) return callback(err);
-            repo.git.blobs(res.sha).fetch(function(err, res) {
+            repo.git.blobs(sha).fetch(function(err, res) {
                 if (err) return callback(err);
                 callback(err, JSON.parse(atob(res.content)));
             });
@@ -165,6 +163,24 @@ function Hubdb(options) {
         });
     }
 
+    /**
+     * get the SHA corresponding to id at the HEAD of options.branch 
+     *
+     * @param {String} id
+     * @param {Function} callback called with (err, result)
+     */
+    function _getSHA(id, callback) {
+        repo.contents("").fetch({
+            ref: options.branch
+        }, function(err, res) {
+            if (err) return callback(err);
+            sha = res.reduce(function(previousValue, item) {
+                return item.name === id ? item.sha : previousValue;
+            }, "");
+            callback(err, sha);
+        });
+    }
+    
     return {
         list: list,
         update: update,
